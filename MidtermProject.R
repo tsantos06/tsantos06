@@ -66,7 +66,7 @@ df2 =data.frame(
   category = c('Admissions', 'Personnel'),
   chart = c(sum(hospitals$Admissions), AdCensus)
 )
-ggplot(df2, aes(x=category, y=chart, fill=category)) + geom_bar(stat="identify")
+ggplot(df2, aes(x=category, y=chart, fill=category)) + geom_bar(stat="identity")
 
 #Line Chart
 
@@ -105,3 +105,25 @@ print(paste("R-squared value:", rsquared))
 #p-values
 pvalues <- summary(MR)$coefficients[, 4]
 print(paste("P-values:", pvalues))
+
+# Total expense vs admissions shows a Heteroscedastic trendline with many outliers 
+#as the data points progress
+
+#Payroll expense vs beds is aslo showing a heteroscedastic trendline with many
+#outliers.
+
+#The pie chart shows predominantly admissions over total expense meaning
+#there needs to be more time spent on the total expense rather than admissions.
+#also a larger hospital will be needed given that there is a high admission rate.
+
+#The bar chart has admissions towering over personnel meaning the hospital
+#needs more personnel to catch up to the amount of admission. Also because there
+#is a higher admission rate, we can conclude a larger hospital will be needed.
+
+#The simple regression output states the total expense of beds and the hospital
+#size directly supports Option B because since the p-value is <0.05 we reject
+#Option A.
+
+#The multivariate regression output states the total expense of beds, personnel, and
+# the hospital also directly supports Option B because since the p-value is <0.05,
+#we reject Option A.
