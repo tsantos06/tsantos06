@@ -18,21 +18,21 @@ cat(colDataTypes)
 
 missingvalues = any(is.na(hospitals))
 print(missingvalues)
-#False no values missing
+#False, no values missing
 
-# Hospital num 1064 and 1751 have lowest amount of beds, 3
+LowNumBed <- hospitals %>% 
+  filter(Total.Expense == min(Total.Expense))
 
-LowNumBed=hospitals %>% filter(Total.Expense==min(Total.Expense))
 print(LowNumBed)
 
-#1,112 hospitals have babies being delivered
+Babies <- hospitals %>%
+  filter(Births == 1 | Not == 1)
 
-Babies = hospitals %>% filter(Births,or,Not==1)
 count(Babies)
 
 #scatter plot of beds and total expense
 
-ggplot(hospitals, aes(x= beds, y=Total.Expense)) + geom_point()
+ggplot(hospitals, aes(x= Beds, y=Total.Expense)) + geom_point()
 
 #admissions and total expense?
 
@@ -49,29 +49,35 @@ ggplot(hospitals, aes(x=Beds, y=Payroll.Expense)) + geom_point()
 #2, descriptive analysis, pie chart
 
 df = data.frame(
-  AdTotExp = c("Admissions", "Total Expense"),
-  Values = c(sum(hospitals$Admissions), sum(hospitals$"Total.Expense"))
+  AdTotExp = c("Admissions", "Personnel"),
+  Values = c(sum(hospitals$Admissions), sum(hospitals$"Personnel"))
 )
 
 df %>% ggplot(aes(x="", y=AdTotExp, fill=Values)) + 
   geom_bar(stat="identity", width=1) + 
   coord_polar("y", start=0) +
-  ggtitle("Pie Chart Admissions vs Total Expense")
+  ggtitle("Pie Chart Admissions vs Personnel")
 
 #Bar Chart
 
-AdCensus = sum(hospitals$Personnel)
+AdCensus = sum(hospitals$Total.Expense)
 print(AdCensus)
 df2 =data.frame(
-  category = c('Admissions', 'Personnel'),
+  category = c('Admissions', 'Total.Expense'),
   chart = c(sum(hospitals$Admissions), AdCensus)
 )
 ggplot(df2, aes(x=category, y=chart, fill=category)) + geom_bar(stat="identity")
 
 #Line Chart
 
-hospital.line = rank(hospitals$Total.Expense)
-ggplot(hospitals, aes(x=hospital.line)) + geom_line(aes(y=Total.Expense))
+ggplot(hospitals, aes(x = Beds)) +
+  geom_line(aes(y = Beds, color = "Beds")) +
+  geom_line(aes(y = Personnel, color = "Personnel")) +  # Removed curly braces from "{Personnel}"
+  labs(title = "Comparison of Beds and Personnel",
+       x = "Beds",
+       y = "Personnel") +
+  scale_color_manual(values = c("Beds" = "blue", "Personnel" = "red")) +
+  theme_minimal()
 
 #3, Simple Regression
 
@@ -106,19 +112,22 @@ print(paste("R-squared value:", rsquared))
 pvalues <- summary(MR)$coefficients[, 4]
 print(paste("P-values:", pvalues))
 
-# Total expense vs admissions shows a Heteroscedastic trendline with many outliers 
+# Total expense vs beds shows a Heteroscedastic trendline with many outliers 
 #as the data points progress
 
-#Payroll expense vs beds is aslo showing a heteroscedastic trendline with many
+#Total expense vs admissions is also showing a heteroscedastic trendline with many
 #outliers.
 
-#The pie chart shows predominantly admissions over total expense meaning
-#there needs to be more time spent on the total expense rather than admissions.
-#also a larger hospital will be needed given that there is a high admission rate.
+#Similarly again, payroll expense vs beds is showing a heteroscedastic trendline
+#with many outliers
 
-#The bar chart has admissions towering over personnel meaning the hospital
-#needs more personnel to catch up to the amount of admission. Also because there
-#is a higher admission rate, we can conclude a larger hospital will be needed.
+#The pie chart shows predominantly admissions over personnel meaning
+#there needs to be more time spent on gathering teams together more so than 
+#worrying about admissions. Also a larger hospital will be needed given that
+#there is a high admission rate.
+
+#The bar chart has total expense completely towering over admissions meaning the 
+#hospital needs to lower the expenses because admissions cannot be controlled.
 
 #The simple regression output states the total expense of beds and the hospital
 #size directly supports Option B because since the p-value is <0.05 we reject
